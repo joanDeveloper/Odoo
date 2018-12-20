@@ -21,24 +21,22 @@ class Tag(models.Model):
 class Stage(models.Model):
     _name = 'todo.task.stage'
     _order = 'sequence,name'
+    _rec_name = 'name'
+    _table_name = 'todo_task_stage'
     # Campos de cadena de caracteres:
     name  = fields.Char('Name',size=40)
     desc  = fields.Text('Description')
     state = fields.Selection([('draft','New'),('open','Started'), ('done','Closed')],'State')
     docs  = fields.Html('Documentation')
-
     # Campos numéricos:
     sequence      = fields.Integer('Sequence')
     perc_complete = fields.Float('% Complete',(3,2))
-
     # Campos de fecha:
     date_effective = fields.Date('Effective Date')
     date_changed   = fields.Datetime('Last Changed')
-
     # Otros campos:
     fold  = fields.Boolean('Folded?')
     image = fields.Binary('Image')
-
     task_ids = fields.One2many('todo.task', 'stage_id', 'Tasks')
 
 class TodoTask(models.Model):
@@ -48,11 +46,12 @@ class TodoTask(models.Model):
     refers_to = fields.Reference(referencable_models,'Refers to')
     stage_fold = fields.Boolean('Stage Folded?', compute='_compute_stage_fold', search='_search_stage_fold', inverse ='_write_stage_fold')
     stage_state = fields.Selection(related='stage_id.state', string='Stage State')
+    user_todo_count = fields.Integer('User To-Do   Count', compute='compute_user_todo_count')
 
     @api.one
     @api.depends('stage_id.fold')
     def _compute_stage_fold(self):
-    	self.stage_fold = self.stage_id.fold
+        self.stage_fold = self.stage_id.fold
 
     def _search_stage_fold(self, operator, value):
         return [('stage_id.fold', operator, value)]
@@ -60,15 +59,19 @@ class TodoTask(models.Model):
     def _write_stage_fold(self):
         self.stage_id.fold = self.stage_fold
 
-    _sql_constraints = [
-    	('todo_task_name_uniq',
-         'UNIQUE (name, user_id, active)',
-         'Task title must be unique!')]
+    _sql_constraints = [(
+        'todo_task_name_unique',
+        'UNIQUE (name, user_id, active)',
+        'Task title must be unique!'
+        )]
 
     @api.constrains('name')
     def _check_name_size(self):
-    	if len(self.name) < 5:
-        	raise ValidationError('Must have 5 chars!')
+        if len(self.name) < 5:
+            raise ValidationError('Must have 5 chars!')
 
+    @api.one
+    def compute_user_todo_count(self):
+        self.user_todo_count = self.search_count([('user_id', '=', self.user_id.id)])
 
-
+    effort_estimate = fields.Integer('Effort Estimate')
