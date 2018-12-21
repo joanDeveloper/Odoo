@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<openerp>
+  <data>
+    <act_window id="todo_app.action_todo_task" name="To-Do Tasks"  res_model="todo.task" view_mode="kanban,tree,form,calendar,gantt,graph" context="{'search_default_filter_my_tasks':True}" />
+        <!-- Agregar vista kanban -->
+        <record id="To-do Task Kanban" model="ir.ui.view">
+          <field name="name">To-do Task Kanban</field>
+          <field name="model">todo.task</field>
+          <field name="arch" type="xml">
+            <kanban>
+              <!-- Fields to use in expressions... -->
+              <templates>
+                <t t-name="kanban-box">
+                  <!-- HTML Qweb template ... -->
+                </t>
+              </templates>
+            </kanban>
+          </field>
+        </record>
+  </data>
+</openerp>
