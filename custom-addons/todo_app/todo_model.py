@@ -7,6 +7,7 @@ class TodoTask(models.Model):
     _name = 'todo.task'
     _inherit = 'mail.thread'
     name = fields.Char('Description', required=True)
+    color = fields.Integer('Color Index')
     is_done = fields.Boolean('Done?')
     active = fields.Boolean('Active?', default=True)
     @api.one
