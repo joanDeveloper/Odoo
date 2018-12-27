@@ -37,8 +37,8 @@
 			parent="menu_todo_task_main"
 			sequence="20"
 			action="action_todo_stage" />
-		<record id="view_form_todo_task_ui" model="ir.ui.view">
-		    <field name="name">view_form_todo_task_ui</field>
+		<record id="view_form_todo_task_inherited" model="ir.ui.view">
+		    <field name="name">todo.task</field>
 		    <field name="model">todo.task</field>
 		    <field name="arch" type="xml">
 
@@ -75,13 +75,14 @@
 							</button>
 						</div>
 
-						<group name="group_top">
-						    <group name="group_left">
+						<group name="top_group">
+						    <group name="left_group">
 						        <field name="date_deadline" />
-						        <separator string="Reference"/>
-						        <field name="refers_to" attrs="{'invisible': [('state','=','draft')]}"/>
+						        <field name="effort_estimate" />
+						        <separator string="References" />
+						        <field name="refers_to" />
 						    </group>
-						    <group name="group_right">
+						    <group name="right_group">
 						        <field name="tag_ids" widget="many2many_tags"/>
 						    </group>
 						</group>
